@@ -29,8 +29,19 @@ int sc_main(int argc, char *argv[])
 	adder.result(result_sig);
 	addertb.result(result_sig);
 
+
+	sc_trace_file* Tf;
+  	Tf = sc_create_vcd_trace_file("traces");
+	  //((vcd_trace_file*)Tf)->sc_set_vcd_time_unit(-9);
+	  sc_trace(Tf, a_sig  , "a" );
+	  sc_trace(Tf, b_sig  , "b" );
+	  sc_trace(Tf, result_sig  , "result" );
+	 
+	  sc_start();  // run forever
+	  sc_close_vcd_trace_file(Tf);
+
 	//start the simulation process
-	sc_start(100, SC_NS);
+	//sc_start(100, SC_NS);
 
 	return 0;
 }
