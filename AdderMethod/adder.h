@@ -21,22 +21,18 @@ public:
 	result("result")
 	{
 		temp_result = 0;
+		flag = false;
 
 		//add method for read values from a and b
 		SC_METHOD(add);
 		sensitive << a << b;
-		dont_initialize();
-		
-		//update_res method for updating the result
-		SC_METHOD(update_res);
-		sensitive << write_event;
 		dont_initialize();
 	}
 
 private:
 
 	int temp_result; //temp_result for reading the port values
-	sc_event write_event;  //event for writing the result in result port
+	bool flag;
 
 	void add();
 	void update_res();
