@@ -1,0 +1,17 @@
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1543646845/LD_LIBRARY_PATH/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1543646845/LD_LIBRARY_PATH/operation=append
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1543646845/LD_LIBRARY_PATH/value=/home/mgarodi/cst_build/SYSTEMC/lib-linux64
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1543646845/SYSTEMC_HOME/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1543646845/SYSTEMC_HOME/operation=append
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1543646845/SYSTEMC_HOME/value=/home/mgarodi/cst_build/SYSTEMC
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1543646845/append=true
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1543646845/appendContributed=true
+environment/project/cdt.managedbuild.config.gnu.exe.release.1742359382/LD_LIBRARY_PATH/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.exe.release.1742359382/LD_LIBRARY_PATH/operation=append
+environment/project/cdt.managedbuild.config.gnu.exe.release.1742359382/LD_LIBRARY_PATH/value=/home/mgarodi/cst_build/SYSTEMC/lib-linux64
+environment/project/cdt.managedbuild.config.gnu.exe.release.1742359382/SYSTEMC_HOME/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.exe.release.1742359382/SYSTEMC_HOME/operation=append
+environment/project/cdt.managedbuild.config.gnu.exe.release.1742359382/SYSTEMC_HOME/value=/home/mgarodi/cst_build/SYSTEMC
+environment/project/cdt.managedbuild.config.gnu.exe.release.1742359382/append=true
+environment/project/cdt.managedbuild.config.gnu.exe.release.1742359382/appendContributed=true
