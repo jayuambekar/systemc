@@ -1,8 +1,8 @@
-/*
- * Target.cc
- *
- *  Created on: 28-May-2018
- *      Author: Jayshree
- */
-
 #include <Target.h>
+
+Target::Target(sc_core::sc_module_name module_name)
+	: sc_module(module_name)
+	, data_in("data_in")
+{
+
+}

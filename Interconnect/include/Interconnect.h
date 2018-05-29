@@ -1,41 +1,15 @@
-/*
- * Interconnect.h
- *
- *  Created on: 28-May-2018
- *      Author: Jayshree
- */
-
-#ifndef INCLUDE_TEMP_H_
-#define INCLUDE_TEMP_H_
+#pragma once
 
 #include <systemc>
-#include <iostream>
 
-using namespace sc_core;
-using namespace sc_dt;
-
-SC_MODULE(Interconnect)
+class Interconnect : public sc_core::sc_module
 {
-private:
-	void interconnect_read();
-	void interconnect_write();
+ public:
+	Interconnect(sc_core::sc_module_name module_name, size_t num_slaves);
+	sc_core::sc_in<uint32_t> data_in;
+	sc_core::sc_in<uint32_t> addr_in;
+	sc_core::sc_vector<sc_core::sc_out<uint32_t>> data_out;
 
-public:
-	sc_in< sc_uint<8> > data_in;
-	sc_in< sc_uint<8> > addr;
-
-	sc_in<bool> read_en;
-	sc_in<bool> write_en;
-
-	SC_CTOR(Interconnect)
-	{
-		SC_METHOD(interconnect_read);
-		sensitive << read_en << addr;
-
-		SC_METHOD(interconnect_write);
-		sensitive << write_en << addr << data_in;
-	}
+ private:
 
 };
-
-#endif /* INCLUDE_TEMP_H_ */
