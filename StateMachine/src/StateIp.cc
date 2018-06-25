@@ -3,19 +3,14 @@
 
 void StateIP :: traverse()
 {
-	CURR_STATE = S0;
-		wait(e1);
-	CURR_STATE = S1;
-		wait(e2);
-	CURR_STATE = S2;
-
-	/*curr_st.curr_state = state.s0;
+	state_res_out.write(s0);
 	wait(e1);
 
-	curr_st.curr_state = state.s1;
+	state_res_out.write(s1);
 	wait(e2);
 
-	curr_st.curr_state = state.s2;*/
+
+	state_res_out.write(s2);
 }
 
 void StateIP :: ev_in1_pin()
