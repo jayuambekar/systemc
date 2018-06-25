@@ -6,7 +6,7 @@ void StateIP :: traverse()
 	state_res_out.write(A);
 	wait(e1 | e2);
 
-	if(e1.in_hierarchy())
+	if(e1.triggered())
 		state_res_out.write(B);
 	else
 		state_res_out.write(C);
