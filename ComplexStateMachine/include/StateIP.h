@@ -17,7 +17,7 @@ public:
 
 	sc_event e1, e2, e3;
 
-	SC_CTOR(StateIP)
+	StateIP(sc_module_name module_name)
 	{
 		SC_THREAD(traverse);
 
@@ -30,7 +30,7 @@ public:
 		SC_METHOD(ev_in3_pin);
 		sensitive << ev_in3.pos();
 	}
-
+	SC_HAS_PROCESS(StateIP);
 
 private:
 	void traverse();

@@ -14,7 +14,7 @@ void StateIP :: traverse()
 	wait(e3);
 	state_res_out.write(D);
 
-	state_res_out.write(C);
+
 }
 
 void StateIP :: ev_in1_pin()
