@@ -1,0 +1,58 @@
+
+#include <Memory.h>
+
+Memory::Memory(sc_core::sc_module_name module_name, size_t size) :
+		sc_module(module_name),
+		size(size)
+{
+	memory = new unsigned char[size];
+	mem_socket.bind(*this);
+}
+
+void Memory :: b_transport(tlm::tlm_generic_payload  &trans, sc_core::sc_time &delay)
+{
+	tlm::tlm_command cmd = trans.get_command();
+	unsigned int width = trans.get_streaming_width();
+	uint64_t address = trans.get_address();
+	unsigned char *ptr = trans.get_data_ptr();
+	unsigned int len = trans.get_data_length();
+	unsigned char *byte = trans.get_byte_enable_ptr();
+
+	if(byte != 0 || len > 4 || width < len || address+len > size)
+	{
+		trans.set_response_status(tlm::TLM_GENERIC_ERROR_RESPONSE);
+		return;
+	}
+
+	if(cmd == tlm::TLM_WRITE_COMMAND)
+	{
+		memcpy(&memory[address], ptr, len);
+	}
+	else if(cmd == tlm::TLM_READ_COMMAND)
+	{
+		memcpy(ptr, &memory[address], len);
+	}
+	else
+	{
+		std::cout << "Command not available.. " << std::endl;
+	}
+
+	trans.set_response_status(tlm::TLM_OK_RESPONSE);
+}
+
+/*
+tlm::tlm_sync_enum Memory :: nb_transport_fw()
+{
+	return;
+}
+*/
+
+bool Memory :: get_direct_mem_ptr()
+{
+	return false;
+}
+
+int Memory :: transport_dbg()
+{
+	return 0;
+}
