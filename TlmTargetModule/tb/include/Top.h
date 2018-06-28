@@ -2,6 +2,7 @@
 
 #include <systemc>
 #include <Memory.h>
+#include <Initiator.h>
 
 class Top : public sc_core::sc_module
 {
@@ -9,6 +10,7 @@ class Top : public sc_core::sc_module
 	Top(sc_core::sc_module_name module_name);
 
  private:
-	Memory *mem;
+	Memory *memory;
+	Initiator *initiator;
 
 };
