@@ -40,18 +40,17 @@ void Memory :: b_transport(tlm::tlm_generic_payload  &trans, sc_core::sc_time &d
 	trans.set_response_status(tlm::TLM_OK_RESPONSE);
 }
 
-tlm:tlm_sync_enum Memory :: nb_transport_fw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& phase, sc_core::sc_time& t)
+tlm::tlm_sync_enum Memory :: nb_transport_fw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& phase, sc_core::sc_time& t)
 {
 	return tlm::TLM_COMPLETED;
 }
 
-
-bool Memory :: get_direct_mem_ptr()
+bool Memory :: get_direct_mem_ptr(tlm::tlm_generic_payload& trans, tlm::tlm_dmi& dmi_data)
 {
 	return false;
 }
 
-int Memory :: transport_dbg()
+unsigned int Memory :: transport_dbg(tlm::tlm_generic_payload& trans)
 {
 	return 0;
 }

@@ -10,6 +10,8 @@ Initiator :: Initiator(sc_module_name module_name)
 	read_dly = sc_time(5, SC_NS);
 	write_dly = sc_time(4, SC_NS);
 
+	init_socket.bind(*this);
+
 	SC_THREAD(read_mem);
 }
 
