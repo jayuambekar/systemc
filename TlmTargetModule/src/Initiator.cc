@@ -7,8 +7,8 @@ Initiator :: Initiator(sc_module_name module_name)
 	: sc_module(module_name)
 	, init_socket("init_socket")
 {
-	read_dly = sc_time(2, SC_NS);
-	write_dly = sc_time(3, SC_NS);
+	read_dly = sc_time(5, SC_NS);
+	write_dly = sc_time(4, SC_NS);
 
 	SC_THREAD(read_mem);
 }
@@ -38,4 +38,15 @@ void  Initiator :: read_mem()
 
 		wait(read_dly);
 	}
+}
+
+
+tlm_sync_enum Initiator :: nb_transport_bw(tlm::tlm_generic_payload& trans,tlm::tlm_phase& phase,sc_core::sc_time& t)
+{
+	return tlm::TLM_COMPLETED;
+}
+
+void Initiator :: invalidate_direct_mem_ptr(sc_dt::uint64 start_range, sc_dt::uint64 end_range)
+{
+	return;
 }

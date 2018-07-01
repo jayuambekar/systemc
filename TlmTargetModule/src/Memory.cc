@@ -40,12 +40,11 @@ void Memory :: b_transport(tlm::tlm_generic_payload  &trans, sc_core::sc_time &d
 	trans.set_response_status(tlm::TLM_OK_RESPONSE);
 }
 
-/*
-tlm::tlm_sync_enum Memory :: nb_transport_fw()
+tlm:tlm_sync_enum Memory :: nb_transport_fw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& phase, sc_core::sc_time& t)
 {
-	return;
+	return tlm::TLM_COMPLETED;
 }
-*/
+
 
 bool Memory :: get_direct_mem_ptr()
 {

@@ -10,7 +10,7 @@ using namespace sc_core;
 
 #define BUFF_SIZE 1048576 //
 
-class Initiator : public sc_core::sc_module, tlm::tlm_bw_nonblocking_transport_if<>
+class Initiator : public sc_core::sc_module, tlm::tlm_bw_transport_if<>
 {
 public:
 	tlm_initiator_socket<> init_socket;
@@ -25,5 +25,7 @@ private:
 	void read_mem();
 	void write_mem();
 
+	tlm_sync_enum nb_transport_bw(	tlm::tlm_generic_payload& trans,tlm::tlm_phase& phase,	sc_core::sc_time& t);
+	void invalidate_direct_mem_ptr(sc_dt::uint64 start_range, sc_dt::uint64 end_range);
 
 };
