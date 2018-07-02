@@ -8,7 +8,7 @@ using namespace tlm;
 using namespace sc_dt;
 using namespace sc_core;
 
-#define BUFF_SIZE 1048576 //
+#define BUFF_SIZE 100 //
 
 class Initiator : public sc_core::sc_module, tlm::tlm_bw_transport_if<>
 {

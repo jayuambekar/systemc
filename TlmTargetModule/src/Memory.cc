@@ -6,7 +6,8 @@ Memory::Memory(sc_core::sc_module_name module_name, size_t size) :
 		size(size)
 {
 	memory = new unsigned char[size];
-	mem_socket.bind(*this);
+	mem_socket.register_b_transport(this, &Memory::b_transport);
+	//mem_socket.bind(*this);
 }
 
 void Memory :: b_transport(tlm::tlm_generic_payload  &trans, sc_core::sc_time &delay)
@@ -40,7 +41,7 @@ void Memory :: b_transport(tlm::tlm_generic_payload  &trans, sc_core::sc_time &d
 	trans.set_response_status(tlm::TLM_OK_RESPONSE);
 }
 
-tlm::tlm_sync_enum Memory :: nb_transport_fw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& phase, sc_core::sc_time& t)
+/*tlm::tlm_sync_enum Memory :: nb_transport_fw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& phase, sc_core::sc_time& t)
 {
 	return tlm::TLM_COMPLETED;
 }
@@ -54,3 +55,4 @@ unsigned int Memory :: transport_dbg(tlm::tlm_generic_payload& trans)
 {
 	return 0;
 }
+*/
