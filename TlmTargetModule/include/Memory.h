@@ -16,8 +16,8 @@ private:
 	size_t size;
 
 	void b_transport(tlm::tlm_generic_payload &trans, sc_core::sc_time &delay);
-	/*tlm::tlm_sync_enum nb_transport_fw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& phase, sc_core::sc_time& t);
+	/*tlm::tlm_sync_enum nb_transport_fw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& phase, sc_core::sc_time& t); */
 	bool get_direct_mem_ptr(tlm::tlm_generic_payload& trans, tlm::tlm_dmi& dmi_data);
-	unsigned int transport_dbg(tlm::tlm_generic_payload& trans);*/
+	/* unsigned int transport_dbg(tlm::tlm_generic_payload& trans);*/
 
 };

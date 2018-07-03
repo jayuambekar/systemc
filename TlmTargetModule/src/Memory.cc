@@ -7,6 +7,7 @@ Memory::Memory(sc_core::sc_module_name module_name, size_t size) :
 {
 	memory = new unsigned char[size];
 	mem_socket.register_b_transport(this, &Memory::b_transport);
+	mem_socket.register_get_direct_mem_ptr(this, &Memory::get_direct_mem_ptr);
 	//mem_socket.bind(*this);
 }
 
@@ -37,7 +38,9 @@ void Memory :: b_transport(tlm::tlm_generic_payload  &trans, sc_core::sc_time &d
 	{
 		std::cout << "Command not available.. " << std::endl;
 	}
-
+	if(address <= 0x50){
+		trans.set_dmi_allowed(true);
+	}
 	trans.set_response_status(tlm::TLM_OK_RESPONSE);
 }
 
@@ -45,12 +48,19 @@ void Memory :: b_transport(tlm::tlm_generic_payload  &trans, sc_core::sc_time &d
 {
 	return tlm::TLM_COMPLETED;
 }
+*/
 
 bool Memory :: get_direct_mem_ptr(tlm::tlm_generic_payload& trans, tlm::tlm_dmi& dmi_data)
 {
-	return false;
+	dmi_data.allow_read_write();
+	dmi_data.set_start_address(0);
+	dmi_data.set_end_address(0x50);
+	dmi_data.set_dmi_ptr(memory);
+	mem_socket->invalidate_direct_mem_ptr(0x0, 0x50);
+	return true;
 }
 
+/*
 unsigned int Memory :: transport_dbg(tlm::tlm_generic_payload& trans)
 {
 	return 0;
