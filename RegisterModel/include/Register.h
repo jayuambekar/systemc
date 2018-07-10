@@ -22,6 +22,10 @@ private:
 	uint32_t get();
 	void clear();
 
+	void set_RAISE(uint32_t val);
+	uint32_t get_RAISE();
+	void clear_RAISE(uint32_t val);
+
 	void set_CLEAR(uint32_t val);
 	uint32_t get_CLEAR();
 	void clear_CLEAR(uint32_t val);
