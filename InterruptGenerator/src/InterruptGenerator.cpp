@@ -44,7 +44,18 @@ void InterruptGenerator::b_transport(tlm::tlm_generic_payload& payload, sc_core:
   else if (command == tlm::TLM_WRITE_COMMAND)
   {
     uint32_t *value = (uint32_t *)dataPointer;
+    if(GET_BIT(*value,0) && !interruptRegisters[address/4].isRaise())
+    {
+    	interruptsOut[address/4].write(true);
+    }
+
+    if(GET_BIT(*value, 1) && !interruptRegisters[address/4].isClear())
+    {
+    	interruptsOut[address/4].write(false);
+    }
+
     interruptRegisters[address / 4].setValue(*value);
+
   }
   else
   {
@@ -54,3 +65,5 @@ void InterruptGenerator::b_transport(tlm::tlm_generic_payload& payload, sc_core:
   payload.set_response_status(tlm::TLM_OK_RESPONSE);
 
 }
+
+

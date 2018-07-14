@@ -1,8 +1,6 @@
 #include "InterruptRegister.h"
 
-#define SET_BIT(num,n) ((num) | (uint32_t(1) << (n)))
-#define CLEAR_BIT(num,n) ((num) & ~(uint32_t(1) << (n)))
-#define GET_BIT(num,n) (((num) >> n) & uint32_t(1))
+
 
 InterruptRegister::InterruptRegister() :
   Register(0x0)

@@ -1,9 +1,8 @@
-#include <InterruptGenerator.h>
+#include <Top.h>
 
 int sc_main(int argc, char *argv[])
 {
-  InterruptGenerator interruptGenerator("interruptGenerator");
+	Top top("top");
 	sc_core::sc_start(100, sc_core::SC_NS);
-	getchar();
 	return 0;
 }

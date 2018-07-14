@@ -1,8 +1,7 @@
 #pragma once
 
 #include <systemc>
-#include "tlm.h"
-#include "tlm_utils/simple_target_socket.h"
+#include <tlm_utils/simple_target_socket.h>
 
 #include <InterruptRegister.h>
 
