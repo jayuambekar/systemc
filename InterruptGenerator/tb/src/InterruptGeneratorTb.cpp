@@ -13,7 +13,13 @@ InterruptGeneratorTb :: InterruptGeneratorTb(sc_core::sc_module_name module_name
 void InterruptGeneratorTb :: test()
 {
 	wait(1, sc_core::SC_NS);
-	std::cout << "[ " << sc_core::sc_time_stamp() << " ] " << " data_out.read() " << std::endl;
+
+	for(int i=0; i<10; i++)
+	{
+		interruptsIn[i];
+
+		std::cout << "[ " << sc_core::sc_time_stamp() << " ] " << " interrupt "<< i << std::endl;
+	}
 
 	wait(10, sc_core::SC_NS);
 }
