@@ -3,6 +3,8 @@
 #include <systemc>
 #include <tlm_utils/simple_initiator_socket.h>
 
+#include <InterruptRegister.h>
+
 class InterruptGeneratorTb : public sc_core::sc_module
 {
 public:
@@ -13,5 +15,14 @@ public:
 private:
 	void test();
 	void monitor();
+	void read_Interrupt();
+	void write_Interrupt();
+	void read_write_interrupt();
+
 	SC_HAS_PROCESS(InterruptGeneratorTb);
+
+	size_t numInterrupts;
+
+	std::vector<InterruptRegister> interruptRegisters;
+
 };
