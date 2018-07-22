@@ -1,100 +1,190 @@
 #include <InterruptGeneratorTb.h>
+#include <time.h>
 
-InterruptGeneratorTb :: InterruptGeneratorTb(sc_core::sc_module_name module_name):
+InterruptGeneratorTb :: InterruptGeneratorTb(sc_core::sc_module_name module_name, int numberOfInterrupts):
 		sc_module(module_name)
 	   ,initiatorSocket("initiatorSocket")
-	   ,interruptsIn("interruptsIn", 10)
-	   ,numInterrupts(10)
-	   ,interruptRegisters(10)
+	   ,interruptsIn("interruptsIn", numberOfInterrupts)
+	   ,numInterrupts(numberOfInterrupts)
+	   ,interruptRegisters(numberOfInterrupts)
+	   , monitorFlag(false)
 {
-	//initiatorSocket.bind(*this);
-	SC_THREAD(read_write_interrupt);
-
 	SC_THREAD(test);
 
 	SC_METHOD(monitor);
-
-}
-
-void InterruptGeneratorTb ::read_write_interrupt()
-{
-	wait(1, sc_core::SC_NS);
-	write_Interrupt();
-	std::cout << "[ " << sc_core::sc_time_stamp() << " ] " << " write_interrupt"  << std::endl;
-
-	wait(1, sc_core::SC_NS);
-	read_Interrupt();
-	std::cout << "[ " << sc_core::sc_time_stamp() << " ] " << " read_interrupt " << std::endl;
-}
-
-void InterruptGeneratorTb :: read_Interrupt()
-{
-	tlm::tlm_generic_payload trans;
-	sc_core::sc_time delay = sc_core::SC_ZERO_TIME;
-
-	trans.set_command(tlm::TLM_READ_COMMAND);
-	trans.set_data_length(4);
-	trans.set_streaming_width(4);
-	trans.set_byte_enable_ptr(0);
-	trans.set_dmi_allowed(false);
-	trans.set_response_status(tlm::TLM_INCOMPLETE_RESPONSE);
-
-	for (int i = 0; i < 100; i += 4)
-	{
-		int word = i;
-		trans.set_address(i);
-		trans.set_data_ptr((unsigned char*)(word));
-
-		initiatorSocket->b_transport(trans, delay);
-
-		if (trans.is_response_error()) {
-			SC_REPORT_ERROR("[TLM-2]", trans.get_response_string().c_str());
-		}
+	for(auto &interrupt : interruptsIn){
+		sensitive << interrupt;
 	}
-}
+	dont_initialize();
 
-void InterruptGeneratorTb :: write_Interrupt()
-{
-	tlm::tlm_generic_payload trans;
-	sc_core::sc_time delay = sc_core::SC_ZERO_TIME;
-
-	trans.set_command(tlm::TLM_WRITE_COMMAND);
-	trans.set_data_length(4);
-	trans.set_streaming_width(4);
-	trans.set_byte_enable_ptr(0);
-	trans.set_dmi_allowed(false);
-	trans.set_response_status(tlm::TLM_INCOMPLETE_RESPONSE);
-
-	for (int i = 0; i < 100; i += 4)
-	{
-		int word = i;
-		trans.set_address(i);
-		trans.set_data_ptr((unsigned char*) (word));
-		initiatorSocket->b_transport(trans, delay);
-
-		if (trans.is_response_error())
-		{
-			SC_REPORT_ERROR("[TLM-2]", trans.get_response_string().c_str());
-		}
-	}
 }
 
 void InterruptGeneratorTb :: test()
 {
-	wait(1, sc_core::SC_NS);
+	wait(sc_core::SC_ZERO_TIME);
+	resetTest();
+	wait(10, sc_core::SC_NS);
+	triggerTest();
+	wait(10,sc_core::SC_NS);
+	readWriteTest();
+}
 
-	for(int i=0; i<10; i++)
-	{
-		interruptsIn[i];
+bool InterruptGeneratorTb::resetTest()
+{
+ uint32_t resetValue = 0x0;
+ uint32_t value;
+ for(size_t i = 0; i < numInterrupts; i++){
+	 value = readRegister(i);
+	 if(readRegister(i) != resetValue){
+		 std::cout << "Reset test failed for Register  " << i << std::endl;
+		 std::cout << "Expected Value: " << resetValue  << ", Actual Value: " << value << std::endl;
+		 std::cout << "[RESET_TEST: FAILED]" << std::endl;
+		 return false;
+	 }
 
-		std::cout << "[ " << sc_core::sc_time_stamp() << " ] " << " interrupt "<< i << std::endl;
+ }
+ std::cout << "[RESET_TEST: PASSED]" << std::endl;
+ return true;
+}
+
+bool InterruptGeneratorTb::readWriteTest()
+{
+	uint32_t writeValues[numInterrupts];
+	uint32_t readValue;
+	srand(time(NULL));
+	for(size_t i = 0; i < numInterrupts; i++){
+		writeValues[i] = rand() % 3;
+		writeRegister(i, writeValues[i]);
 	}
 
-	wait(10, sc_core::SC_NS);
+	for(size_t i = 0; i < numInterrupts; i++){
+		readValue = readRegister(i);
+		if(readValue != writeValues[i]){
+			std::cout << "Read write test failed for Register : " << i << ", Expected Value : "
+					<< std::hex << "0x" << writeValues[i] << ", Actual Value: " << "0x"<< readValue << std::endl;
+			std::cout << "[READ_WRITE_TEST:FAILED]" << std::endl;
+			return false;
+		}
+	}
+	std::cout << "[READ_WRITE_TEST:PASSED]" << std::endl;
+	return true;
+}
+
+bool InterruptGeneratorTb :: triggerTest()
+{
+	bool interruptStatus[numInterrupts];
+	srand(time(NULL));
+	for(size_t i = 0; i < numInterrupts; i++){
+		interruptStatus[i] = rand()%2;
+		if(interruptStatus[i]){
+			setInterrupt(i, true);
+			wait(sc_core::SC_ZERO_TIME);
+			if(!interruptsIn[i].read()){
+				std::cout << "Unable to set interrupt " <<  i << std::endl;
+				std::cout << "[INTERRUPT_TEST:FAILED]" << std::endl;
+				return false;
+			}
+		}
+	}
+
+	for(size_t i = 0; i < numInterrupts; i++){
+		if(interruptStatus[i]){
+			setInterrupt(i, false);
+			wait(sc_core::SC_ZERO_TIME);
+			if(interruptsIn[i].read()){
+				std::cout << "Unable to clear interrupt " <<  i << std::endl;
+				std::cout << "[INTERRUPT_TEST:FAILED]" << std::endl;
+				return false;
+			}
+		}
+		else{
+			if(interruptsIn[i].read()){
+				std::cout << "Interrupt set unexpectedly " <<  i << std::endl;
+				std::cout << "[INTERRUPT_TEST:FAILED]" << std::endl;
+				return false;
+			}
+
+		}
+	}
+	std::cout << "[INTERRUPT_TEST:PASSED]" << std::endl;
+	return true;
+}
+
+uint32_t InterruptGeneratorTb::readRegister(int index)
+{
+	tlm::tlm_generic_payload trans;
+	sc_core::sc_time delay = sc_core::sc_time(10, sc_core::SC_NS); //sc_core::SC_ZERO_TIME;
+
+	uint32_t value;
+	trans.set_command(tlm::TLM_READ_COMMAND);
+	trans.set_address(index*4);
+	trans.set_data_ptr((unsigned char *) (&value));
+	trans.set_streaming_width(4);
+	trans.set_data_length(4);
+	trans.set_dmi_allowed(false);
+	trans.set_byte_enable_ptr(0);
+	trans.set_response_status(tlm::TLM_INCOMPLETE_RESPONSE);
+
+	initiatorSocket->b_transport(trans, delay);
+
+	if (trans.is_response_error())
+	{
+		SC_REPORT_ERROR("[TLM-2]", trans.get_response_string().c_str());
+	}
+
+	return value;
+}
+
+void InterruptGeneratorTb::writeRegister(int index, uint32_t value)
+{
+	tlm::tlm_generic_payload trans;
+	sc_core::sc_time delay = sc_core::sc_time(10, sc_core::SC_NS); //sc_core::SC_ZERO_TIME;
+
+	trans.set_command(tlm::TLM_WRITE_COMMAND);
+	trans.set_address(index*4);
+	trans.set_data_ptr((unsigned char *) (&value));
+	trans.set_streaming_width(4);
+	trans.set_data_length(4);
+	trans.set_dmi_allowed(false);
+	trans.set_byte_enable_ptr(0);
+	trans.set_response_status(tlm::TLM_INCOMPLETE_RESPONSE);
+
+	initiatorSocket->b_transport(trans, delay);
+
+	if (trans.is_response_error())
+	{
+		SC_REPORT_ERROR("[TLM-2]", trans.get_response_string().c_str());
+	}
+}
+
+void InterruptGeneratorTb :: setInterrupt(int index, bool status)
+{
+	if(status)
+	{
+		writeRegister(index, 0x1);
+	}
+	else
+	{
+		writeRegister(index, 0x2);
+	}
+
 }
 
 void InterruptGeneratorTb :: monitor()
 {
-	std::cout << "[ " << sc_core::sc_time_stamp() << " ] Interrupt asserted : Intr0 " << std::endl;
+	int i = 0;
+	if(!monitorFlag){
+		return;
+	}
+	for(auto &interrupt : interruptsIn){
+		if(interrupt.value_changed_event().triggered()){
+			if(interrupt.read()){
+				std::cout << "[ " << sc_core::sc_time_stamp() << " ] Interrupt raised : Intr  "<< i <<" " << std::endl;
+			}
+			else{
+				std::cout << "[ " << sc_core::sc_time_stamp() << " ] Interrupt cleared : Intr  "<< i <<" " << std::endl;
+			}
+		}
+		i++;
+	}
 }
-

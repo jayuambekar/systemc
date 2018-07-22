@@ -1,11 +1,11 @@
 #include "InterruptGenerator.h"
 
-InterruptGenerator::InterruptGenerator(sc_core::sc_module_name moduleName) :
+InterruptGenerator::InterruptGenerator(sc_core::sc_module_name moduleName, int numberOfInterrupts) :
   sc_module(moduleName)
   , targetSocket("targetSocket")
-  , interruptsOut("interruptsOut", 10)
-  , numInterrupts(10)
-  , interruptRegisters(10)
+  , interruptsOut("interruptsOut", numberOfInterrupts)
+  , numInterrupts(numberOfInterrupts)
+  , interruptRegisters(numberOfInterrupts)
 {
   targetSocket.register_b_transport(this, &InterruptGenerator::b_transport);
 }
@@ -29,32 +29,36 @@ void InterruptGenerator::b_transport(tlm::tlm_generic_payload& payload, sc_core:
   if (byteEnablePointer != 0)
   {
     payload.set_response_status(tlm::TLM_BYTE_ENABLE_ERROR_RESPONSE);
+    return;
   }
 
   if (dataLength != 4 || streamingWidth != dataLength)
   {
     payload.set_response_status(tlm::TLM_BURST_ERROR_RESPONSE);
+    return;
   }
 
   if (command == tlm::TLM_READ_COMMAND)
   {
-    uint32_t *value = (uint32_t *)dataPointer;
-    *value = interruptRegisters[address / 4].getValue();
+    uint32_t *readValue = (uint32_t *)dataPointer;
+    *readValue = interruptRegisters[address / 4].getValue();
   }
   else if (command == tlm::TLM_WRITE_COMMAND)
   {
-    uint32_t *value = (uint32_t *)dataPointer;
-    if(GET_BIT(*value,0) && !interruptRegisters[address/4].isRaise())
+    uint32_t value = *((uint32_t *)dataPointer);
+    if(GET_BIT(value,0) && !interruptRegisters[address/4].isRaise())
     {
     	interruptsOut[address/4].write(true);
+    	value = CLEAR_BIT(value,1);
     }
 
-    if(GET_BIT(*value, 1) && !interruptRegisters[address/4].isClear())
+    else if(GET_BIT(value, 1) && !interruptRegisters[address/4].isClear())
     {
     	interruptsOut[address/4].write(false);
+    	value = CLEAR_BIT(value, 0);
     }
 
-    interruptRegisters[address / 4].setValue(*value);
+    interruptRegisters[address / 4].setValue(value);
 
   }
   else

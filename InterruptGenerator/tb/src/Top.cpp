@@ -1,11 +1,11 @@
 #include <Top.h>
 
-Top :: Top(sc_core::sc_module_name module_name):
+Top :: Top(sc_core::sc_module_name module_name, int numberOfInterrupts):
 		sc_module(module_name)
-	   ,interruptSignal("interruptSignal", 10)
+	   ,interruptSignal("interruptSignal", numberOfInterrupts)
 {
-	interruptGenerator = new InterruptGenerator("interruptGenerator");
-	interruptGeneratorTb = new InterruptGeneratorTb("interruptGeneratorTb");
+	interruptGenerator = new InterruptGenerator("interruptGenerator", numberOfInterrupts);
+	interruptGeneratorTb = new InterruptGeneratorTb("interruptGeneratorTb", numberOfInterrupts);
 
 	interruptGenerator->interruptsOut(interruptSignal);
 	interruptGeneratorTb->interruptsIn(interruptSignal);
