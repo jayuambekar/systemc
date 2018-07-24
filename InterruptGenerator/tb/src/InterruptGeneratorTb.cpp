@@ -12,7 +12,8 @@ InterruptGeneratorTb :: InterruptGeneratorTb(sc_core::sc_module_name module_name
 	SC_THREAD(test);
 
 	SC_METHOD(monitor);
-	for(auto &interrupt : interruptsIn){
+	for(auto &interrupt : interruptsIn)
+	{
 		sensitive << interrupt;
 	}
 	dont_initialize();
@@ -33,17 +34,20 @@ bool InterruptGeneratorTb::resetTest()
 {
  uint32_t resetValue = 0x0;
  uint32_t value;
- for(size_t i = 0; i < numInterrupts; i++){
+ for(size_t i = 0; i < numInterrupts; i++)
+ {
 	 value = readRegister(i);
-	 if(readRegister(i) != resetValue){
+	 if(readRegister(i) != resetValue)
+	 {
 		 std::cout << "Reset test failed for Register  " << i << std::endl;
 		 std::cout << "Expected Value: " << resetValue  << ", Actual Value: " << value << std::endl;
 		 std::cout << "[RESET_TEST: FAILED]" << std::endl;
+		 std::cout << std::endl;
 		 return false;
 	 }
-
  }
  std::cout << "[RESET_TEST: PASSED]" << std::endl;
+ std::cout << std::endl;
  return true;
 }
 
@@ -52,21 +56,26 @@ bool InterruptGeneratorTb::readWriteTest()
 	uint32_t writeValues[numInterrupts];
 	uint32_t readValue;
 	srand(time(NULL));
-	for(size_t i = 0; i < numInterrupts; i++){
+	for(size_t i = 0; i < numInterrupts; i++)
+	{
 		writeValues[i] = rand() % 3;
 		writeRegister(i, writeValues[i]);
 	}
 
-	for(size_t i = 0; i < numInterrupts; i++){
+	for(size_t i = 0; i < numInterrupts; i++)
+	{
 		readValue = readRegister(i);
-		if(readValue != writeValues[i]){
+		if(readValue != writeValues[i])
+		{
 			std::cout << "Read write test failed for Register : " << i << ", Expected Value : "
 					<< std::hex << "0x" << writeValues[i] << ", Actual Value: " << "0x"<< readValue << std::endl;
 			std::cout << "[READ_WRITE_TEST:FAILED]" << std::endl;
+			std::cout << std::endl;
 			return false;
 		}
 	}
 	std::cout << "[READ_WRITE_TEST:PASSED]" << std::endl;
+	std::cout << std::endl;
 	return true;
 }
 
@@ -74,46 +83,57 @@ bool InterruptGeneratorTb :: triggerTest()
 {
 	bool interruptStatus[numInterrupts];
 	srand(time(NULL));
-	for(size_t i = 0; i < numInterrupts; i++){
+	for(size_t i = 0; i < numInterrupts; i++)
+	{
 		interruptStatus[i] = rand()%2;
-		if(interruptStatus[i]){
+		if(interruptStatus[i])
+		{
 			setInterrupt(i, true);
 			wait(sc_core::SC_ZERO_TIME);
-			if(!interruptsIn[i].read()){
+			if(!interruptsIn[i].read())
+			{
 				std::cout << "Unable to set interrupt " <<  i << std::endl;
 				std::cout << "[INTERRUPT_TEST:FAILED]" << std::endl;
+				std::cout << std::endl;
 				return false;
 			}
 		}
 	}
 
-	for(size_t i = 0; i < numInterrupts; i++){
-		if(interruptStatus[i]){
+	for(size_t i = 0; i < numInterrupts; i++)
+	{
+		if(interruptStatus[i])
+		{
 			setInterrupt(i, false);
 			wait(sc_core::SC_ZERO_TIME);
-			if(interruptsIn[i].read()){
+			if(interruptsIn[i].read())
+			{
 				std::cout << "Unable to clear interrupt " <<  i << std::endl;
 				std::cout << "[INTERRUPT_TEST:FAILED]" << std::endl;
+				std::cout << std::endl;
 				return false;
 			}
 		}
-		else{
-			if(interruptsIn[i].read()){
+		else
+		{
+			if(interruptsIn[i].read())
+			{
 				std::cout << "Interrupt set unexpectedly " <<  i << std::endl;
 				std::cout << "[INTERRUPT_TEST:FAILED]" << std::endl;
+				std::cout << std::endl;
 				return false;
 			}
-
 		}
 	}
 	std::cout << "[INTERRUPT_TEST:PASSED]" << std::endl;
+	std::cout << std::endl;
 	return true;
 }
 
 uint32_t InterruptGeneratorTb::readRegister(int index)
 {
 	tlm::tlm_generic_payload trans;
-	sc_core::sc_time delay = sc_core::sc_time(10, sc_core::SC_NS); //sc_core::SC_ZERO_TIME;
+	sc_core::sc_time delay = sc_core::sc_time(10, sc_core::SC_NS);
 
 	uint32_t value;
 	trans.set_command(tlm::TLM_READ_COMMAND);
@@ -138,7 +158,7 @@ uint32_t InterruptGeneratorTb::readRegister(int index)
 void InterruptGeneratorTb::writeRegister(int index, uint32_t value)
 {
 	tlm::tlm_generic_payload trans;
-	sc_core::sc_time delay = sc_core::sc_time(10, sc_core::SC_NS); //sc_core::SC_ZERO_TIME;
+	sc_core::sc_time delay = sc_core::sc_time(10, sc_core::SC_NS);
 
 	trans.set_command(tlm::TLM_WRITE_COMMAND);
 	trans.set_address(index*4);
@@ -167,18 +187,21 @@ void InterruptGeneratorTb :: setInterrupt(int index, bool status)
 	{
 		writeRegister(index, 0x2);
 	}
-
 }
 
 void InterruptGeneratorTb :: monitor()
 {
 	int i = 0;
-	if(!monitorFlag){
+	if(!monitorFlag)
+	{
 		return;
 	}
-	for(auto &interrupt : interruptsIn){
-		if(interrupt.value_changed_event().triggered()){
-			if(interrupt.read()){
+	for(auto &interrupt : interruptsIn)
+	{
+		if(interrupt.value_changed_event().triggered())
+		{
+			if(interrupt.read())
+			{
 				std::cout << "[ " << sc_core::sc_time_stamp() << " ] Interrupt raised : Intr  "<< i <<" " << std::endl;
 			}
 			else{

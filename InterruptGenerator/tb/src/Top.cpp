@@ -11,6 +11,4 @@ Top :: Top(sc_core::sc_module_name module_name, int numberOfInterrupts):
 	interruptGeneratorTb->interruptsIn(interruptSignal);
 
 	interruptGeneratorTb->initiatorSocket.bind(interruptGenerator->targetSocket);
-
-
 }

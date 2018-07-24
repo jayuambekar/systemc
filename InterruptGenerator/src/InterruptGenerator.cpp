@@ -59,7 +59,6 @@ void InterruptGenerator::b_transport(tlm::tlm_generic_payload& payload, sc_core:
     }
 
     interruptRegisters[address / 4].setValue(value);
-
   }
   else
   {
@@ -67,7 +66,6 @@ void InterruptGenerator::b_transport(tlm::tlm_generic_payload& payload, sc_core:
     return;
   }
   payload.set_response_status(tlm::TLM_OK_RESPONSE);
-
 }
 
 
