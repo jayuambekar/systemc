@@ -10,6 +10,7 @@ class Interconnect : public sc_core::sc_module
 	sc_core::sc_in<uint32_t> addr_in;
 	sc_core::sc_vector<sc_core::sc_out<uint32_t>> data_out;
 
+
  private:
 
 };

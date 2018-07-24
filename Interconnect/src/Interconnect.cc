@@ -5,6 +5,7 @@ Interconnect::Interconnect(sc_core::sc_module_name module_name, size_t num_slave
 	, data_in("data_in")
 	, addr_in("addr_in")
 	, data_out("data_out",num_slaves)
+
 {
 
 }
