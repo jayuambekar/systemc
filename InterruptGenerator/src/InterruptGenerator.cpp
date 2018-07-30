@@ -12,6 +12,7 @@ InterruptGenerator::InterruptGenerator(sc_core::sc_module_name moduleName, int n
 
 void InterruptGenerator::b_transport(tlm::tlm_generic_payload& payload, sc_core::sc_time & delay)
 {
+
   tlm::tlm_command 	command           = payload.get_command();
   uint64_t          address           = payload.get_address();
   unsigned char*    dataPointer       = payload.get_data_ptr();
@@ -19,6 +20,7 @@ void InterruptGenerator::b_transport(tlm::tlm_generic_payload& payload, sc_core:
   unsigned char*    byteEnablePointer = payload.get_byte_enable_ptr();
   unsigned int      streamingWidth    = payload.get_streaming_width();
 
+ // std::cout << "Model : " << name() << ", Address: " << std::hex << "0x"<< address << std::endl;
 
   if ((address + dataLength) > (numInterrupts*4) || address%4 != 0)
   {

@@ -37,7 +37,7 @@ bool InterruptGeneratorTb::resetTest()
  for(size_t i = 0; i < numInterrupts; i++)
  {
 	 value = readRegister(i);
-	 if(readRegister(i) != resetValue)
+	 if(value != resetValue)
 	 {
 		 std::cout << "Reset test failed for Register  " << i << std::endl;
 		 std::cout << "Expected Value: " << resetValue  << ", Actual Value: " << value << std::endl;
